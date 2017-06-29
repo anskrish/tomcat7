@@ -1,0 +1,22 @@
+---
+- name: Install epel
+  yum: name=http://dl.fedoraproject.org/pub/epel/7/x86_64/e/epel-release-7-9.noarch.rpm state=present
+
+- name: Yum install Tomcat7 in REL system
+  yum: pkg=java,tomcat update_cache=yes
+- name: Adding JAVA_OPTS to tomcat config file
+  lineinfile:
+    dest: /usr/share/tomcat/conf/tomcat.conf
+    line: 'JAVA_OPTS="-Djava.security.egd=file:/dev/./urandom -Djava.awt.headless=true -Xmx512m -XX:MaxPermSize=256m -XX:+UseConcMarkSweepGC"'
+- name: Install tomcat admin packages
+  yum: name={{ item }} state=present
+  with_items:
+     - tomcat-webapps
+     - tomcat-admin-webapps
+- name: Download Jar file from github repo
+  get_url:
+    url: https://tomcat.apache.org/tomcat-6.0-doc/appdev/sample/sample.war
+    dest: /usr/share/tomcat/webapps
+- name: Restart the tomcat service
+  service: name=tomcat state=restarted
+
