@@ -1,5 +1,5 @@
 ---
 - name: install tomcat 7
-  hosts: cli
+  hosts: 54.224.65.178
   roles:
       - tomcat7
